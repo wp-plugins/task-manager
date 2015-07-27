@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<capabilities>
+	<!-- Tasks' custom post type capabilities -->
+	<capability>
+		<slug>edit_wpeomtm_task</slug>
+		<name>Edit task</name>
+		<state>activ</state>
+		<module id="wpeomtm_task_element_type" >Elements' type</module>
+		<submodule id="wpeomtm_task_element_type_file" >Tasks</submodule>
+		<type sub="edit" >write</type>
+		<is_default_for_roles>
+			<role>administrator</role>
+		</is_default_for_roles>
+	</capability>
+	<capability>
+		<slug>edit_wpeomtm_tasks</slug>
+		<name>Edit tasks</name>
+		<state>activ</state>
+		<module id="wpeomtm_task_element_type" >Elements' type</module>
+		<submodule id="wpeomtm_task_element_type_file" >Tasks</submodule>
+		<type sub="edit" >write</type>
+		<is_default_for_roles>
+			<role>administrator</role>
+		</is_default_for_roles>
+	</capability>
+	<capability>
+		<slug>edit_others_wpeomtm_tasks</slug>
+		<name>Edit other users' tasks</name>
+		<state>activ</state>
+		<module id="wpeomtm_task_element_type" >Elements' type</module>
+		<submodule id="wpeomtm_task_element_type_file" >Tasks</submodule>
+		<type sub="edit" >write</type>
+		<is_default_for_roles>
+			<role>administrator</role>
+		</is_default_for_roles>
+	</capability>
+	<capability>
+		<slug>read_wpeomtm_task</slug>
+		<name>Read tasks</name>
+		<state>activ</state>
+		<module id="wpeomtm_task_element_type" >Elements' type</module>
+		<submodule id="wpeomtm_task_element_type_file" >Tasks</submodule>
+		<type>read</type>
+		<is_default_for_roles>
+			<role>administrator</role>
+		</is_default_for_roles>
+	</capability>
+	<capability>
+		<slug>delete_wpeomtm_task</slug>
+		<name>Delete tasks</name>
+		<state>activ</state>
+		<module id="wpeomtm_task_element_type" >Elements' type</module>
+		<submodule id="wpeomtm_task_element_type_file" >Tasks</submodule>
+		<type sub="delete" >write</type>
+		<is_default_for_roles>
+			<role>administrator</role>
+		</is_default_for_roles>
+	</capability>
+	<capability>
+		<slug>publish_wpeomtm_tasks</slug>
+		<name>Publich tasks</name>
+		<state>activ</state>
+		<module id="wpeomtm_task_element_type" >Elements' type</module>
+		<submodule id="wpeomtm_task_element_type_file" >Tasks</submodule>
+		<type sub="edit" >write</type>
+		<is_default_for_roles>
+			<role>administrator</role>
+		</is_default_for_roles>
+	</capability>
+	<capability>
+		<slug>read_private_wpeomtm_tasks</slug>
+		<name>Read private tasks</name>
+		<state>activ</state>
+		<module id="wpeomtm_task_element_type" >Elements' type</module>
+		<submodule id="wpeomtm_task_element_type_file" >Tasks</submodule>
+		<type>read</type>
+		<is_default_for_roles>
+			<role>administrator</role>
+		</is_default_for_roles>
+	</capability>
+</capabilities>

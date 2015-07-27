@@ -1,0 +1,382 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WPEO Tasks\n"
+"POT-Creation-Date: 2015-07-22 11:06+0100\n"
+"PO-Revision-Date: 2015-07-22 11:06+0100\n"
+"Last-Translator: \n"
+"Language-Team: Eoxia\n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8\n"
+"X-Poedit-Basepath: ..\\\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: core\n"
+"X-Poedit-SearchPathExcluded-1: modules\n"
+
+#: asset/js/language.js.php:2
+msgid "Delete this point"
+msgstr "Supprimer ce point"
+
+#: asset/js/language.js.php:3
+msgid "The point moved to trash"
+msgstr "Le point à été déplacer à la corbeille"
+
+#: asset/js/language.js.php:4
+msgid "Time : "
+msgstr "Temps :"
+
+#: controller/wpeo_tasks_ctr.php:44 controller/wpeo_tasks_ctr.php:46
+#: controller/wpeo_tasks_ctr.php:48 controller/wpeo_tasks_ctr.php:74
+msgid "Tasks"
+msgstr "Tâches"
+
+#: controller/wpeo_tasks_ctr.php:45 controller/wpeo_tasks_custom_ctr.php:49
+msgid "Task"
+msgstr "Tâche"
+
+#: controller/wpeo_tasks_ctr.php:47
+msgid "Parent Task:"
+msgstr "Tâche parent:"
+
+#: controller/wpeo_tasks_ctr.php:49
+msgid "View Task"
+msgstr "Voir la tâche"
+
+#: controller/wpeo_tasks_ctr.php:50
+msgid "Add New Task"
+msgstr "Ajouter une nouvelle tâche"
+
+#: controller/wpeo_tasks_ctr.php:51
+msgid "New Task"
+msgstr "Créer une tâche"
+
+#: controller/wpeo_tasks_ctr.php:52
+msgid "Edit Task"
+msgstr "Editer la tâche"
+
+#: controller/wpeo_tasks_ctr.php:53
+msgid "Update Task"
+msgstr "Mettre à jour la tâche"
+
+#: controller/wpeo_tasks_ctr.php:54
+msgid "Search Tasks"
+msgstr "Rechercher une tâche"
+
+#: controller/wpeo_tasks_ctr.php:55
+msgid "No tasks found"
+msgstr "Aucune tâche trouvé"
+
+#: controller/wpeo_tasks_ctr.php:56
+msgid "No tasks found in Trash"
+msgstr "Aucune tâche trouvé dans la corbeille"
+
+#: controller/wpeo_tasks_ctr.php:75
+msgid "Tasks management"
+msgstr "Gestion des tâches"
+
+#: controller/wpeo_tasks_ctr.php:104
+msgid "We can't use this task"
+msgstr "Impossible d'utiliser cette tâche"
+
+#: controller/wpeo_tasks_ctr.php:122 controller/wpeo_tasks_ctr.php:125
+msgid "Task management dashboard"
+msgstr "Tableau de bord de la gestion des tâches"
+
+#: controller/wpeo_tasks_ctr.php:122 controller/wpeo_tasks_ctr.php:125
+#: template/backend/dashboard-main.php:8
+msgid "Tasks manager"
+msgstr "Gestion des tâches"
+
+#: controller/wpeo_tasks_ctr.php:188
+msgid "Tasks per line"
+msgstr "Tâche par ligne"
+
+#: controller/wpeo_tasks_ctr.php:249 controller/wpeo_tasks_ctr.php:290
+#: controller/wpeo_tasks_ctr.php:334 controller/wpeo_tasks_ctr.php:498
+#: controller/wpeo_tasks_ctr.php:536 controller/wpeo_tasks_ctr.php:571
+#: controller/wpeo_tasks_ctr.php:636 controller/wpeo_tasks_ctr.php:669
+#: controller/wpeo_tasks_points_ctr.php:67
+#: controller/wpeo_tasks_points_ctr.php:119
+#: controller/wpeo_tasks_points_ctr.php:173
+#: controller/wpeo_tasks_points_ctr.php:208
+#: controller/wpeo_tasks_points_ctr.php:252
+#: controller/wpeo_tasks_points_ctr.php:295
+#: controller/wpeo_tasks_points_ctr.php:336
+#: controller/wpeo_tasks_points_ctr.php:387
+#: controller/wpeo_tasks_tags_ctr.php:63
+#: controller/wpeo_tasks_tags_ctr.php:110
+#: controller/wpeo_tasks_tags_ctr.php:145
+#: controller/wpeo_tasks_users_ctr.php:51
+#: controller/wpeo_tasks_users_ctr.php:109
+msgid "You are not allowed to edit this task : Incorrect nonce"
+msgstr "Vous n'êtes pas autorisé à modifier cette tâche : Nonce non valide"
+
+#: controller/wpeo_tasks_ctr.php:267
+msgid "You have created a new task"
+msgstr "Vous avez créé une nouvelle tâche"
+
+#: controller/wpeo_tasks_ctr.php:285 controller/wpeo_tasks_ctr.php:493
+#: controller/wpeo_tasks_ctr.php:565 controller/wpeo_tasks_points_ctr.php:62
+#: controller/wpeo_tasks_points_ctr.php:114
+#: controller/wpeo_tasks_points_ctr.php:168
+#: controller/wpeo_tasks_points_ctr.php:203
+#: controller/wpeo_tasks_points_ctr.php:331
+msgid "You are not allowed to edit this task : You need to be in write mode"
+msgstr ""
+"Vous n'êtes pas autorisé à modifier cette tâche : Vous avez besoin d'être en "
+"mode écriture"
+
+#: controller/wpeo_tasks_ctr.php:297
+msgid "Problem to delete the task : The ID is not found"
+msgstr "Problème pour supprimer cette tâche : ID manquant"
+
+#: controller/wpeo_tasks_ctr.php:312
+msgid "The task was moved to the Trash"
+msgstr "La tâche à été déplacée vers la corbeille."
+
+#: controller/wpeo_tasks_ctr.php:364 controller/wpeo_tasks_ctr.php:418
+msgid "You are not allowed to export this task : Incorrect nonce"
+msgstr "Vous n'êtes pas autorisé à exporter cette tâche : Nonce invalide"
+
+#: controller/wpeo_tasks_ctr.php:423
+msgid "No data to export"
+msgstr "Pas de donnée à exporter"
+
+#: controller/wpeo_tasks_ctr.php:473
+#, php-format
+msgid "Export task %s to %s"
+msgstr "Export des tâches %s vers %s"
+
+#: controller/wpeo_tasks_points_ctr.php:75
+msgid "You tried to add an empty point"
+msgstr "Vous essayez de rajouter un point vide"
+
+#: controller/wpeo_tasks_tags_ctr.php:75
+msgid "\"No tags\""
+msgstr "\"Pas de mots clés\""
+
+#: controller/wpeo_tasks_users_ctr.php:68
+msgid "No user"
+msgstr "Pas d'utilisateur"
+
+#: model/wpeo_tasks_json_mod.php:29
+msgid "Nothing to display"
+msgstr "Rien à afficher"
+
+#: model/wpeo_tasks_mod.php:32 template/backend/dashboard-main.php:8
+#: template/custom/main.php:10
+msgid "New task"
+msgstr "Nouvelle tâche"
+
+#: model/wpeo_tasks_mod.php:160
+msgid "get_title_of_task : You need to use a integer value"
+msgstr "Valeur entière"
+
+#: model/wpeo_tasks_mod.php:175
+msgid "get_time_in_task : You need to use a integer value"
+msgstr "Valeur entière"
+
+#: model/wpeo_tasks_tags_mod.php:55
+msgid "update_tag_in : You need to use an integer"
+msgstr "Vous devez utiliser un entier"
+
+#: model/wpeo_tasks_users_mod.php:20 model/wpeo_tasks_users_mod.php:21
+#: model/wpeo_tasks_users_mod.php:100 model/wpeo_tasks_users_mod.php:121
+#: model/wpeo_tasks_users_mod.php:160
+msgid "You need to use an integer"
+msgstr "Vous devez utiliser un entier"
+
+#: template/backend/comments.php:4
+msgid "Time history"
+msgstr "Historique du temps"
+
+#: template/backend/dashboard-main.php:10
+msgid "My tasks"
+msgstr "Mes tâches"
+
+#: template/backend/dashboard-main.php:11
+msgid "All tasks"
+msgstr "Toutes les tâches"
+
+#: template/backend/dashboard-main.php:12
+msgid "Export selected tasks"
+msgstr "Exporter les tâches séléctionnées"
+
+#: template/backend/dashboard-main.php:16
+msgid "Sort : "
+msgstr "Trier"
+
+#: template/backend/dashboard-main.php:19
+msgid "All"
+msgstr "Toutes"
+
+#: template/backend/dashboard-main.php:32 template/custom/main.php:21
+msgid "No tasks, press the \"New task\" button for create a task"
+msgstr ""
+"Pas de tâche, appuyez sur le bouton \"Nouvelle tâche\" pour crée une tâche"
+
+#: template/backend/form-comment.php:11
+msgid "Date"
+msgstr "Date"
+
+#: template/backend/form-comment.php:12
+msgid "YYYY-MM-DD"
+msgstr "YYYY-MM-DD"
+
+#: template/backend/form-comment.php:13
+msgid "Get the current date"
+msgstr "Obtenir la date actuelle"
+
+#: template/backend/form-comment.php:16
+msgid "Minute"
+msgstr "Minute(s)"
+
+#: template/backend/form-comment.php:17
+msgid "MM"
+msgstr "MM"
+
+#: template/backend/form-comment.php:21
+msgid "Comment"
+msgstr "Commentaire"
+
+#: template/backend/form-comment.php:22
+msgid "Write your comment here..."
+msgstr "Écrivez votre commentaire ici..."
+
+#: template/backend/form-comment.php:26 template/backend/setting.php:20
+#: template/backend/tags.php:23 template/backend/users.php:22
+msgid "Ok"
+msgstr "Ok"
+
+#: template/backend/new-point.php:7
+msgid "Write your point here..."
+msgstr "Écrivez votre point ici..."
+
+#: template/backend/new-point.php:10
+msgid "Add this point"
+msgstr "Ajouter ce point"
+
+#: template/backend/notification.php:10
+msgid "Cancel"
+msgstr "Annuler"
+
+#: template/backend/point.php:7
+msgid "Drag and drop for set the order"
+msgstr "Drag and drop pour ajuster l'ordre"
+
+#: template/backend/point.php:17
+msgid "Add time"
+msgstr "Ajouter du temps"
+
+#: template/backend/point.php:23 template/backend/task.php:80
+msgid "Users"
+msgstr "Utilisateurs"
+
+#: template/backend/points.php:7
+msgid "Toggle completed point"
+msgstr "Afficher les points complétés"
+
+#: template/backend/points.php:7
+msgid "Completed point"
+msgstr "Les points terminés"
+
+#: template/backend/setting.php:8
+msgid "Display the data in your theme"
+msgstr "Les données à afficher dans votre thème"
+
+#: template/backend/setting.php:10
+msgid "Display users : "
+msgstr "Afficher les utilisateurs :"
+
+#: template/backend/setting.php:15
+msgid "Display time : "
+msgstr "Afficher le temps :"
+
+#: template/backend/tags.php:6
+msgid "The tag name"
+msgstr "Le nom du mot clé"
+
+#: template/backend/tags.php:7
+msgid "Create tag"
+msgstr "Créer un mot clé"
+
+#: template/backend/task.php:14
+msgid "Switch to write mode"
+msgstr "Passez en mode écriture"
+
+#: template/backend/task.php:39
+msgid "Settings"
+msgstr "Réglages"
+
+#: template/backend/task.php:50 template/backend/task.php:51
+msgid "Export"
+msgstr "Exporter"
+
+#: template/backend/task.php:53
+msgid "Move to trash"
+msgstr "Déplacer à la corbeille"
+
+#: template/backend/task.php:53
+msgid "Trash"
+msgstr "Corbeille"
+
+#: template/backend/task.php:71
+msgid "Tags"
+msgstr "Mots clés"
+
+#: template/backend/users.php:4
+msgid "The username"
+msgstr "Le nom d'utilisateur"
+
+#: template/frontend/account/menu.php:4
+msgid "My task"
+msgstr "Mes tâches"
+
+#: template/frontend/tasks.php:11
+msgid "Start by creating a task"
+msgstr "Commencez par crée une tâche"
+
+#~ msgid "Minute(s)"
+#~ msgstr "Minute(s)"
+
+#~ msgid "Now"
+#~ msgstr "Maintenant"
+
+#~ msgid "N"
+#~ msgstr "N"
+
+#~ msgid "Tasks tracker"
+#~ msgstr "Suivi de tâche"
+
+#~ msgid "Export all"
+#~ msgstr "Exporter"
+
+#~ msgid "An error occured while dissociating file"
+#~ msgstr "Une erreur est survenue lors de la dissociation du fichier"
+
+#~ msgid "File have been dissociate succesfully"
+#~ msgstr "Le fichier à été déssocier avec succés"
+
+#~ msgid "A required parameter is missing, please check your request."
+#~ msgstr ""
+#~ "Un paramètre requis est manquant, s'il vous plaît vérifier votre demande."
+
+#~ msgid "Download the file"
+#~ msgstr "Télécharger le fichier"
+
+#~ msgid "Delete file"
+#~ msgstr "Supprimer le fichier"
+
+#~ msgid "No files affected"
+#~ msgstr "Aucun fichier affectés"
+
+#~ msgid "Are you sure you want to dissociate this file?"
+#~ msgstr "Êtes vous sur de vouloir dissocier ce fichier ?"
+
+#~ msgid "Delete the point"
+#~ msgstr "Supprimer ce point"

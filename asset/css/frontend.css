@@ -1,0 +1,37 @@
+.wpeo-project-wrap * {
+  	-webkit-box-sizing: border-box;
+  	box-sizing: border-box;
+  	margin: 0;
+  	padding: 0;
+}
+.wpeo-project-wrap ul, .wpeo-project-wrap li {
+	list-style-type: none;
+}
+
+.wpeo-project-wrap .wpeo-task-dashboard-tags li {
+	display: inline-block;
+}
+
+.wpeo-project-wrap .wpeo-project-task {
+	width: 100%;
+	border: 1px solid rgba(0,0,0,0.2);
+	margin-bottom: 20px;
+}
+.wpeo-project-wrap header {
+	border-bottom: 1px solid rgba(0,0,0,0.2);
+	padding: 20px;
+}
+.wpeo-project-wrap header span {
+	color: #eb535e;
+}
+.wpeo-project-wrap header h3 {
+	font-size: 16px;
+	line-height: 1;
+	margin: 0;
+}
+.wpeo-project-wrap .wpeo-task-point-container {
+	padding: 20px;
+}
+.wpeo-project-wrap .wpeo-task-point-container li span {
+	font-weight: bold;
+}

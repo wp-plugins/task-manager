@@ -1,0 +1,52 @@
+/**	Specific styles	*/
+ul.wpeo_files-types-buttons {
+    float: right;
+    margin: 0;
+}
+ul.wpeo_files-types-buttons li {
+    display: inline-block;
+}
+.wpeo_files-contact-item-details {
+	position: relative;
+	padding: 0 0 0 5px;
+	border: 1px solid #CCCCCC;
+	overflow: hidden;
+}
+.wpeo_files-contact-email-address {
+	margin: 6px 0;
+	float: left;
+	font-size: 11px;
+}
+.wpeo_files-contact-actions img {
+	width: 35px;
+}
+
+.wpeomtm-attached-file-container {
+	display: table;
+	width: 100%;
+	background-color: #CCC;
+}
+.wpeomtm-attached-file-container li {
+	display: table-row;
+	height: 35px;
+}
+.wpeomtm-attached-file-container li span {
+	display: table-cell;
+	vertical-align: middle;
+	border-bottom: 5px solid #FFF;
+}
+.wpeomtm-attached-file-container li span:first-child {
+	text-align: center;
+}
+.wpeofiles-action-button-container {
+	width: 25px;
+}
+.wpeofiles-action-button-container a {
+	color: #000;
+}
+.wpeofiles-action-button-container a.dashicons-trash:hover {
+	color: red;
+}
+.wpeomtm-attached-file-container li span:last-child ul li {
+	display: inline-block;
+}
