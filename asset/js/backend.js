@@ -9,7 +9,7 @@ jQuery( document ).ready( function(){
 	 * This heart is only a ajax request "Hey you need to say me if you need to be update or not ?"
 	 * If the task need to be updated, it means that some update was performed on the content
 	 */
-	interval = setInterval(function() {
+/**	interval = setInterval(function() {
 //		clearInterval(interval);
 
 		var serialized_data = [];
@@ -34,7 +34,7 @@ jQuery( document ).ready( function(){
 			}
 			
 		});
-	}, heart_task_time);
+	}, heart_task_time);*/
 	
 	
 	/** My thickbox */
