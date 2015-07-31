@@ -57,7 +57,8 @@ class wpeo_tasks_points_ctr {
 		$response = new wpeo_tasks_json_mod();
 		$response->setObjectId( $_POST['task_id'] );
 		
-		if ( !wpeo_tasks_users_mod::check_user_write_mode( ( int ) $_POST['task_id'], ( int ) get_current_user_id() ) ) {
+		
+		if ( class_exists( 'wpeo_user_ctr' ) && !wpeo_user_mod::check_user_write_mode( ( int ) $_POST['task_id'], ( int ) get_current_user_id() ) ) {
 			$response->setCode(21);
 			$response->setState( 'error', __( 'You are not allowed to edit this task : You need to be in write mode', 'wpeotasks-i18n' ) );
 		}
@@ -109,7 +110,7 @@ class wpeo_tasks_points_ctr {
 		$response = new wpeo_tasks_json_mod();
 		$response->setObjectId( $_POST['task_id'] );
 		
-		if ( !wpeo_tasks_users_mod::check_user_write_mode( ( int ) $_POST['task_id'], ( int ) get_current_user_id() ) ) {
+		if ( class_exists( 'wpeo_user_ctr' ) && !wpeo_user_mod::check_user_write_mode( ( int ) $_POST['task_id'], ( int ) get_current_user_id() ) ) {
 			$response->setCode(21);
 			$response->setState( 'error', __( 'You are not allowed to edit this task : You need to be in write mode', 'wpeotasks-i18n' ) );
 		}
@@ -163,7 +164,7 @@ class wpeo_tasks_points_ctr {
 		$response = new wpeo_tasks_json_mod();
 		$response->setObjectId( $_POST['task_id'] );
 		
-		if ( !wpeo_tasks_users_mod::check_user_write_mode( ( int ) $_POST['task_id'], ( int ) get_current_user_id() ) ) {
+		if ( class_exists( 'wpeo_user_ctr' ) && !wpeo_user_mod::check_user_write_mode( ( int ) $_POST['task_id'], ( int ) get_current_user_id() ) ) {
 			$response->setCode(21);
 			$response->setState( 'error', __( 'You are not allowed to edit this task : You need to be in write mode', 'wpeotasks-i18n' ) );
 		}
@@ -198,7 +199,7 @@ class wpeo_tasks_points_ctr {
 		$response = new wpeo_tasks_json_mod();
 		$response->setObjectId( $_POST['task_id'] );
 		
-		if ( !wpeo_tasks_users_mod::check_user_write_mode( ( int ) $_POST['task_id'], ( int ) get_current_user_id() ) ) {
+		if ( class_exists( 'wpeo_user_ctr' ) && !wpeo_user_mod::check_user_write_mode( ( int ) $_POST['task_id'], ( int ) get_current_user_id() ) ) {
 			$response->setCode(21);
 			$response->setState( 'error', __( 'You are not allowed to edit this task : You need to be in write mode', 'wpeotasks-i18n' ) );
 		}
@@ -296,7 +297,7 @@ class wpeo_tasks_points_ctr {
 		}
 			
 		if( !$response->check_have_error() ) {
-			wpeo_tasks_points_mod::add_comment( (int) $_POST['task_id'], (int) $_POST['point_id'], (string) $_POST['message'], $_POST['minute'] );
+			wpeo_tasks_points_mod::add_comment( (int) $_POST['task_id'], (int) $_POST['point_id'], (string) $_POST['message'], $_POST['date'], $_POST['minute'] );
 		
 			$response->setCode(0);
 			$response->setState( 'success', __( sprintf( 'Add comment %s with time %d for the point %d in the task %d', $_POST['message'], $_POST['minute'], $_POST['point_id'], $_POST['task_id'] ), 'wpeotasks-i18n' ) );
@@ -326,7 +327,7 @@ class wpeo_tasks_points_ctr {
 		$response = new wpeo_tasks_json_mod();
 		$response->setObjectId( $_POST['task_id'] );
 		
-		if ( !wpeo_tasks_users_mod::check_user_write_mode( ( int ) $_POST['task_id'], ( int ) get_current_user_id() ) ) {
+		if ( class_exists( 'wpeo_user_ctr' ) && !wpeo_user_mod::check_user_write_mode( ( int ) $_POST['task_id'], ( int ) get_current_user_id() ) ) {
 			$response->setCode(21);
 			$response->setState( 'error', __( 'You are not allowed to edit this task : You need to be in write mode', 'wpeotasks-i18n' ) );
 		}

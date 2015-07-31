@@ -2,26 +2,26 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class wpeo_tasks_tags_mod {
-	public static $taxonomy = "wpeo_project-task-tags";
+class wpeo_tag_mod {
+	public static $taxonomy = "wpeo_tag";
 
 	/**
-	 * Get all tags
+	 * Get all tag
 	 * @return Ambigous <multitype:, WP_Error, mixed, string, NULL>
 	 */
-	public static function get_tags() {
+	public static function get_tag() {
 		$terms = get_terms( self::$taxonomy, array( 'hide_empty' => 0, ) );
 				
 		return $terms;
 	}
 	
 	/**
-	 * Get tags in task
-	 * @param int $task_id
+	 * Get tags in post
+	 * @param int $id The post ID
 	 * @return Ambigous <multitype:, WP_Error, mixed>
 	 */
-	public static function get_tags_in( $task_id ) {
-		$terms = wp_get_object_terms( $task_id, self::$taxonomy, array("fields" => "slugs") );
+	public static function get_tag_in( $id ) {
+		$terms = wp_get_object_terms( $id, self::$taxonomy, array("fields" => "slugs") );
 		
 		return $terms;
 	}
@@ -47,19 +47,17 @@ class wpeo_tasks_tags_mod {
 	/**
 	 * Get current tags and new tags checked, remove all current tags not checked in the new tags 
 	 * and add all new tags
-	 * @param int $task_id
+	 * @param int $id The post ID
 	 * @param array $array_tags_slug (string)
 	 * @return void
 	 */
-	public static function update_tags_in( $task_id, $array_tags_slug ) {
-		if( !is_int( $task_id ) || empty( $task_id ) ) wp_die( __( 'update_tag_in : You need to use an integer', 'wpeotasks-i18n' ) );
-		
-		$current_tags = self::get_tags_in ( $task_id );
+	public static function update_tag_in( $id, $array_tags_slug ) {
+		$current_tags = self::get_tag_in ( $id );
 		
 		if( !empty($current_tags ) ){
 			foreach( $current_tags as $tags ) {
 				if( !in_array($tags, is_array( $array_tags_slug ) ? $array_tags_slug : array() ) ) {
-					wp_remove_object_terms( $task_id, $tags, self::$taxonomy );
+					wp_remove_object_terms( $id, $tags, self::$taxonomy );
 				}
 			}
 		}
@@ -67,19 +65,19 @@ class wpeo_tasks_tags_mod {
 		if( !empty( $array_tags_slug ) ) {
 				/** Add new */
 			foreach( $array_tags_slug as $slug ) {
-				wp_set_object_terms( $task_id, $slug, self::$taxonomy, true );
+				wp_set_object_terms( $id, $slug, self::$taxonomy, true );
 			}
 		}
 	}
 	
 	/**
 	 * Add tag in task by the slug
-	 * @param int $task_id
+	 * @param int $id The post id
 	 * @param string $slug
 	 * @return void
 	 */
-	public static function add_tag_in( $task_id, $slug ) {
-		wp_set_object_terms( $task_id, $slug, self::$taxonomy, true );
+	public static function add_tag_in( $id, $slug ) {
+		wp_set_object_terms( $id, $slug, self::$taxonomy, true );
 	}
 
 }

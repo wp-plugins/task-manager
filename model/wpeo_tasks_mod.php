@@ -18,9 +18,12 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 class wpeo_tasks_mod {
 	public static $post_type = 'wpeo-tasks';
   	public static $task_state = "publish";
+  	public static $task_state_archive = "archive";
   	public static $meta_key_estimated_time = "wpeo_task_estimated_time";
   	public static $meta_key_task_planing = "_wpeomtm_task_planing";
   	public static $meta_key_setting = "_wpeomtm_task_setting";
+  	public static $meta_key_timeline = "wpeo_task_timeline";
+  	
   	
   	/**
   	 * Add new task and add the default user in
@@ -46,14 +49,27 @@ class wpeo_tasks_mod {
  			return null;
  		}
  		
- 		/** Insert default user */
- 		wpeo_tasks_users_mod::add_user_in( (int) $task, (int) get_current_user_id(), 'task' );
  		
- 		/** You're the writer */
- 		wpeo_tasks_users_mod::add_user_write ( (int) $task, (int) get_current_user_id() );
+ 		if( class_exists( 'wpeo_user_ctr' ) ) {
+ 			/** Insert default user */
+	 		wpeo_user_mod::add_user_in( (int) $task, (int) get_current_user_id(), 'post' );
+	 		
+	 		/** You're the writer */
+	 		wpeo_user_mod::add_user_write ( (int) $task, (int) get_current_user_id() );
+ 		}
   	
  		/** Default setting meta */
  		self::add_default_setting( ( int ) $task );
+ 		
+ 		/** Add to timeline */
+ 		$current_user = wp_get_current_user();
+ 		
+ 		$args = array(
+ 			'time' 		=> current_time( 'mysql' ),
+ 			'user'		=> $current_user->display_name,
+ 			'action'	=> __( 'Add a new task #' . $task, 'wpeotasks-i18n' ),
+ 		);
+ 		self::add_to_timeline( $task, $args );
  		
   		return $task;
   	}
@@ -66,9 +82,10 @@ class wpeo_tasks_mod {
   		$args = array(
       		"posts_per_page" => -1,
       		"post_type" => self::$post_type,
-      		"post_status" => self::$task_state,
+      		"post_status" => array( self::$task_state, self::$task_state_archive, ),
       		"orderby" => "ID",
       		"order" => "ASC",
+  			"post_parent" => 0,
     	);
 
     	/** Get all task */
@@ -76,7 +93,7 @@ class wpeo_tasks_mod {
     	
     	if( !empty( $array_posts->posts ) ) {
     		foreach( $array_posts->posts as &$post ) {
-    			$post->informations = self::get_informations_task( (int) $post->ID );
+    			$post->informations = self::get_informations_task( (int) $post->ID, $post->post_status );
     		}
     	}
     	
@@ -118,33 +135,47 @@ class wpeo_tasks_mod {
  		return $posts;
  	}
  	
- 	public static function get_informations_task( $task_id ) { 	
+ 	public static function get_informations_task( $task_id, $status = 'publish' ) { 	
  		$post = new stdClass();	
  		$post->time = self::get_time_in_task( $task_id );
  		
- 		/** User can write */
- 		$post->user_can_write = wpeo_tasks_users_mod::check_user_write_mode( $task_id, get_current_user_id() );
+		/** Default value */
+ 		$post->user_can_write = 1;
+ 		$post->my_task = '';
  		
- 		/** Get id users */
- 		$post->users = wpeo_tasks_users_mod::get_users_in( $task_id, 'task' );
- 		/** Get infos users */
- 		$post->users = wpeo_tasks_users_mod::get_users_info( $post->users );
+ 		/** The module wpeo_user_mod exist ? */
+ 		if( class_exists( 'wpeo_user_mod' ) ) {
+ 			/** So let me know if i can write ! Anyway, i write if i want ! */
+	 		$post->user_can_write = wpeo_user_mod::check_user_write_mode( $task_id, get_current_user_id() );
+	
+	 		/** So let me know who users affected to this task */
+	 		$post->users = wpeo_user_mod::get_users_in( $task_id, 'task' );
+	 		/** I need more information for the affected users */
+	 		$post->users = wpeo_user_mod::get_users_info( $post->users );
+	 		
+	 		/** I'm affected to this ? */
+	 		$post->my_task = ( wpeo_user_mod::get_user_in( $task_id, get_current_user_id() ) ) ? 'wpeo-my-task' : '';
+ 		}
+
+ 		/** The module tags exist ? Use it ! */
+ 		$post->class_tags = '';
+ 		if( class_exists( 'wpeo_tag_mod' ) ) {
+ 			$post->tags = wpeo_tag_mod::get_tag_in( $task_id );
  			
- 		$post->tags = wpeo_tasks_tags_mod::get_tags_in( $task_id );
+ 			if( !empty($post->tags ) ) {
+ 				foreach( $post->tags as $tag ) {
+ 					$post->class_tags .= ' ' . $tag;
+ 				}
+ 			}
+ 				
+ 			if( self::$task_state_archive == $status ) {
+ 				$post->class_tags .= ' wpeo-task-archived';
+ 			}
+ 		}
  			
  		$post->count_point_completed = self::count_point( $task_id, true );
  			
  		$post->estimated_time = self::get_estimated_time( $task_id );
- 		
- 		$post->my_task = ( wpeo_tasks_users_mod::get_user_in( $task_id, get_current_user_id() ) ) ? 'wpeo-my-task' : '';
- 		
- 		$post->class_tags = '';
- 		
- 		if( !empty($post->tags ) ) {
- 			foreach( $post->tags as $tag ) {
- 				$post->class_tags .= ' ' . $tag;
- 			}
- 		}
  		
  		$post->setting = self::get_default_setting( ( int ) $task_id );
  	
@@ -256,5 +287,28 @@ class wpeo_tasks_mod {
 		}
 		
 		return $meta;
+	}
+
+	public static function add_to_timeline ( $task_id, $args ) {
+		$post_meta = self::get_timeline( $task_id );
+		
+		if( is_array( $post_meta ) )
+			$post_meta[] = $args;
+		else
+			$post_meta[0] = $args;
+		
+		update_post_meta( $task_id, self::$meta_key_timeline, $post_meta );
+	}
+	
+	public static function get_timeline( $task_id = 0 ) {
+		/** One task */
+		if( 0 !== $task_id )
+			$post_meta = get_post_meta( $task_id, self::$meta_key_timeline, true );
+		else {
+			/** All task */
+			$post_meta = null;
+		}
+		
+		return $post_meta;
 	}
 }

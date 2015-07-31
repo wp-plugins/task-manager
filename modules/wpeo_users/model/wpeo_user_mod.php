@@ -2,7 +2,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class wpeo_tasks_users_mod {
+class wpeo_user_mod {
 	public static $meta_key = 'wpeo_task_users';
 	public static $metakey_user_write = 'wpeo_project_task_user_write';
 
@@ -28,7 +28,7 @@ class wpeo_tasks_users_mod {
 		/** Add my user */
 		$users[] = ( int ) $user_id;
 
-		if( $type == 'task' ) {
+		if( $type == 'post' ) {
 			$result = update_post_meta( $id, self::$meta_key, $users );
 		}
 		else {
@@ -99,7 +99,7 @@ class wpeo_tasks_users_mod {
 	public static function update_user_in( $id, $array_user_id, $type ) {
 		if( !is_int( $id ) || empty( $id ) ) wp_die( __( 'You need to use an integer', 'wpeotasks-i18n' ) );
 		
-		if( 'task' == $type ) {
+		if( 'post' == $type ) {
 			$result = update_post_meta( $id, self::$meta_key, $array_user_id );
 		}
 		else {
@@ -120,7 +120,7 @@ class wpeo_tasks_users_mod {
 	public static function get_users_in( $id, $type ) {
 		if( !is_int( $id ) || empty( $id ) ) wp_die( __( 'You need to use an integer', 'wpeotasks-i18n' ) );
 
-		if( 'task' == $type ) {
+		if( 'post' == $type ) {
 			$users = get_post_meta( $id, self::$meta_key, true );
 		}
 		else {
@@ -159,13 +159,12 @@ class wpeo_tasks_users_mod {
 	public static function clean_user_in( $id, $type ) {
 		if( !is_int( $id ) || empty( $id ) ) wp_die( __( 'You need to use an integer', 'wpeotasks-i18n' ) );
 
-		if( 'task' == $type ) {
+		if( 'post' == $type ) {
 			delete_post_meta( $id, self::$meta_key );
 		}
 		else {
 			delete_comment_meta( $id, self::$meta_key );
 		}
-
 	}
 
 	public static function get_users_info( $array_id ) {

@@ -1,4 +1,42 @@
+var cancel;
+var heart_task_time = 30000;
+var interval;
+
 jQuery( document ).ready( function(){	
+	/** 
+	 * Heart task 
+	 * All task where i'm in write mode need to be checked by this heart
+	 * This heart is only a ajax request "Hey you need to say me if you need to be update or not ?"
+	 * If the task need to be updated, it means that some update was performed on the content
+	 */
+	interval = setInterval(function() {
+//		clearInterval(interval);
+
+		var serialized_data = [];
+		jQuery('.wpeo-serialized-data-heart').each(function(key)	 {
+			serialized_data[key] = jQuery(this).val();
+		});
+		
+		var data = {
+			action: 'wpeo-heart-task',
+			data: serialized_data,
+		};
+		
+		jQuery.post(ajaxurl, data, function(response) {
+			if( response.data.refresh_task_id ) {
+				response.data.refresh_task_id.forEach(function( id ) {
+					refresh_task( id );
+				});
+
+				if(response.data.refresh_task_id.length > 0) {
+					create_notification( 'info', 'info', response.data.notification_message, undefined, undefined );
+				}
+			}
+			
+		});
+	}, heart_task_time);
+	
+	
 	/** My thickbox */
 	jQuery(document).on('click', '.my-thickbox', function(e) {
 		e.preventDefault();
@@ -8,7 +46,7 @@ jQuery( document ).ready( function(){
 	var array_marker = [];
 	
 	/** Dashicons marker */
-	jQuery(".wpeo-project-wrap .task-marker").click(function() {
+	jQuery(document).find(".task-marker").click(function() {
 		var block_task = jQuery(this).closest('.wpeo-project-task');
 		var task_id = block_task.find('.wpeo-point-task-id').val();
 		
@@ -93,6 +131,54 @@ jQuery( document ).ready( function(){
 		});	
 	});
 	
+	/** Send to archive */
+	jQuery(document).on('click', '.wpeo-send-to-archive', function() {
+		var task_id = jQuery(this).data('id');
+		var data_nonce = jQuery(this).data('nonce');
+		var task = jQuery(this).closest('.grid-item');
+		
+		var data = {
+			action: "wpeo-send-to-archive",
+			task_id: task_id,
+			_wpnonce: data_nonce,
+		};
+		
+		jQuery.post(ajaxurl, data, function(response) {
+			if(!display_error(task_id, response)) {
+				task.addClass('wpeo-task-archived');
+				task.fadeOut(function() {
+					refresh_task ( task_id );
+					jQuery('.grid').masonry();
+				});
+				create_notification( 'trash', 'info', response.data.notification_message, response.data.notification_method, task_id );
+			}
+		});
+	});
+	
+	/** Send to unpacked */
+	jQuery(document).on('click', '.wpeo-send-to-unpacked', function() {
+		var task_id = jQuery(this).data('id');
+		var data_nonce = jQuery(this).data('nonce');
+		var task = jQuery(this).closest('.grid-item');
+		
+		var data = {
+			action: "wpeo-send-to-unpacked",
+			task_id: task_id,
+			_wpnonce: data_nonce,
+		};
+		
+		jQuery.post(ajaxurl, data, function(response) {
+			if(!display_error(task_id, response)) {
+				task.fadeIn(function() {
+					task.removeClass('wpeo-task-archived');
+					refresh_task ( task_id );
+					jQuery('.grid').masonry();
+				});
+				create_notification( 'info', 'info', response.data.notification_message, undefined, task_id );
+			}
+		});
+	});
+	
 	/** Delete a task */
 	jQuery(document).on('click', '.wpeo-send-task-to-trash', function() {
 		var task_id = jQuery(this).data('id');
@@ -120,25 +206,27 @@ jQuery( document ).ready( function(){
 	
 	/** Delete a comment in point */
 	jQuery(document).on('click', '.wpeo-send-comment-to-trash', function() {
-		var comment_id = jQuery(this).data('id');
-		var data_nonce = jQuery(this).data('nonce');
-		var task_id = jQuery(this).closest('#TB_window').find('.wpeo-point-task-id').val();
-		var point_id = jQuery(this).closest('#TB_window').find('.wpeo-point-id').val();
-		
-		var data = {
-			action: 'wpeo-delete-comment',
-			comment_id: comment_id,
-			point_id: point_id,
-			task_id: task_id,
-			_wpnonce: data_nonce,
-		};
-		
-		jQuery.post(ajaxurl, data, function(response) {
-			if(!display_error( task_id, response) ) {
-				jQuery('.wpeo-point-comment-' + comment_id).fadeOut();
-				create_notification( 'info', 'info', response.data.notification_message, undefined, undefined );
-			}
-		});
+		if(confirm('Delete this comment ? ' ) ) {
+			var comment_id = jQuery(this).data('id');
+			var data_nonce = jQuery(this).data('nonce');
+			var task_id = jQuery(this).closest('#TB_window').find('.wpeo-point-task-id').val();
+			var point_id = jQuery(this).closest('#TB_window').find('.wpeo-point-id').val();
+			
+			var data = {
+				action: 'wpeo-delete-comment',
+				comment_id: comment_id,
+				point_id: point_id,
+				task_id: task_id,
+				_wpnonce: data_nonce,
+			};
+			
+			jQuery.post(ajaxurl, data, function(response) {
+				if(!display_error( task_id, response) ) {
+					jQuery('.wpeo-point-comment-' + comment_id).fadeOut();
+					create_notification( 'info', 'info', response.data.notification_message, undefined, undefined );
+				}
+			}); 
+		}
 	});
 	
 	/** Change color button add point */
@@ -303,7 +391,7 @@ jQuery( document ).ready( function(){
 	jQuery(document).on('click', '.wpeo-export', function() {
 		var task_id = jQuery(this).data('id');
 		var element = jQuery(this);
-		var link = element.closest('.wpeo-bloc-additional-buttons').find('.wpeo-download-file');
+		var link = element.closest('.grid-item').find('.wpeo-download-file');
 		var data_nonce = jQuery(this).data('nonce');
 		
 		var data = {
@@ -510,6 +598,22 @@ jQuery( document ).ready( function(){
 		e.preventDefault();
 	});
 	
+	/** @version 1.2
+	 * 	When press the button archive
+	 *  Task the server with ajax request to send me all archived task !
+	 *  When we get the response, display it
+	 *  
+	 *  @version 1.0
+	 *  Hide all task
+	 *  Display archived task
+	 */
+	jQuery('.wpeo-project-wrap .wpeo-button-archive-task').click(function() {
+		jQuery('.grid .grid-item').hide();
+		jQuery('.grid .wpeo-task-archived').fadeIn(function() {
+			jQuery('.grid').masonry();
+		});
+	});
+	
 	/** Masonry */
 	jQuery('.grid').masonry({
 		itemSelector: '.grid-item',
@@ -586,55 +690,10 @@ jQuery( document ).ready( function(){
 //			}
 //		}
 //	});
-	
-	/** refresh task */
-	function refresh_task( task_id ) {
-		var data = {
-			action: "wpeo-refresh-task",
-			task_id: task_id,
-			_wpnonce: jQuery('.wpeo-project-task-' + task_id + ' .wpeo-project-task-nonce').val(),
-		};
-		
-		/** Refresh task */
-		jQuery.post(ajaxurl, data, function(response) {
-			if(!display_error( task_id, response ) ) {
-				jQuery('.wpeo-project-task-' + task_id).html(response.data.template);
-				
-				/** Sortable point */
-				jQuery(".wpeo-project-task-" + task_id + " .wpeo-task-point-sortable").sortable({
-					connectWith: ".wpeo-task-point-sortable",
-					items: "> li:not(.ui-state-disabled)",
-					dropOnEmpty: false,
-					handle: '.dashicons-menu',
-					update: function ( event, ui) {
-						var task_id = jQuery(this).closest('.wpeo-task-point').data('id');
-						set_order ( task_id );
-					}
-				});
-				
-				jQuery(".wpeo-project-wrap textarea").flexText();
-			}
-		});
-	}
-	
-	function display_error( task_id, response ) {
-		if( response.state === 'success' ) {
-			return false;
-		}
-		
-		create_notification('no', 'error', response.message, undefined, undefined );
-		
-//		jQuery('.wpeo-project-task-' + task_id + ' .wpeo-task-project-error').html( response.message );
-//		
-//		setTimeout(function() {
-//			jQuery('.wpeo-project-task-' + task_id + ' .wpeo-task-project-error').html( '' );
-//		}, 2000);
-//		
-		return true;
-	}
+
 	
 	/** Cancel function dynamic call */
-	var cancel = {
+	cancel = {
 		cancel_delete_task: function(bloc_notification, task_id) {
 			var data = {
 				action: 'wpeo-cancel-delete-task',
@@ -657,6 +716,10 @@ jQuery( document ).ready( function(){
 				refresh_task( args.task_id );
 				bloc_notification.remove();
 			});
+		},
+		cancel_archive_task: function(bloc_notification, task_id) {
+			jQuery('.wpeo-project-task-' + task_id).find('.wpeo-send-to-unpacked').click();
+			bloc_notification.remove();
 		}
 	};
 	
@@ -779,6 +842,9 @@ jQuery( document ).ready( function(){
 		
 		array_marker.length = 0;
 	}
+	
+	/** Table sorter for the Timeline ! */
+	jQuery('#wpeo-task-timeline').tablesorter();
 });
 
 function create_notification( dashicons, type, message, method, args ) {
@@ -840,4 +906,65 @@ jQuery.fn.putCursorAtEnd = function() {
 
   });
 
+};
+
+/**
+ * Hey i need to refresh my task for update the content
+ * Can u do this for me ?
+ * @param int task_id
+ * @return void 
+ */
+function refresh_task( task_id ) {
+	var data = {
+		action: "wpeo-refresh-task",
+		task_id: task_id,
+		_wpnonce: jQuery('.wpeo-project-task-' + task_id + ' .wpeo-project-task-nonce').val(),
+	};
+	
+	/** Refresh task */
+	jQuery.post(ajaxurl, data, function(response) {
+		if(!display_error( task_id, response ) ) {
+			jQuery('.wpeo-project-task-' + task_id).html(response.data.template);
+			
+			/** Sortable point */
+			jQuery(".wpeo-project-task-" + task_id + " .wpeo-task-point-sortable").sortable({
+				connectWith: ".wpeo-task-point-sortable",
+				items: "> li:not(.ui-state-disabled)",
+				dropOnEmpty: false,
+				handle: '.dashicons-menu',
+				update: function ( event, ui) {
+					var task_id = jQuery(this).closest('.wpeo-task-point').data('id');
+					set_order ( task_id );
+				}
+			});
+			
+			jQuery(".wpeo-project-wrap textarea").flexText();
+		}
+	});
+}
+
+function display_error( task_id, response ) {
+	if( response.state === 'success' ) {
+		return false;
+	}
+	
+	create_notification('no', 'error', response.message, undefined, undefined );
+	
+	return true;
+}
+
+/** This variable get some function for use it like a callback */
+var callback = {
+	callback_user: function( args ) {
+		refresh_task( args.post_id );
+		create_notification('info', 'info', args.notification_message, undefined );
+	},
+	callback_tag: function( args ) {
+		console.log( args );
+		refresh_task( args.post_id );
+		create_notification('info', 'info', args.notification_message, undefined );
+	},
+	after_load: function() {
+		jQuery('.grid').masonry();
+	}
 };

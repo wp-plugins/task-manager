@@ -112,7 +112,7 @@ class wpeo_tasks_points_mod {
 			else
 				$comments_not_done[] = $comment;
 			
-			$comment->informations->users = wpeo_tasks_users_mod::get_users_in ( ( int ) $comment->comment_ID, "point" );
+			if( class_exists( 'wpeo_user_ctr' ) ) $comment->informations->users = wpeo_user_mod::get_users_in ( ( int ) $comment->comment_ID, "point" );
 			
 			/** No users found in meta */
 			if( empty( $comment->informations->users ) ) {
@@ -241,10 +241,11 @@ class wpeo_tasks_points_mod {
 	 * @param int $task_id
 	 * @param int $point_id
 	 * @param string $message
+	 * @param string $date
 	 * @param int $minute
 	 * @return NULL|Ambigous <number, boolean>
 	 */
-	public static function add_comment( $task_id, $point_id, $message, $minute ) {
+	public static function add_comment( $task_id, $point_id, $message, $date, $minute ) {
 		if( empty( $message ) ) return null;
 		
 		/** Check format variable */

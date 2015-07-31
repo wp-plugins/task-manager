@@ -13,19 +13,24 @@
 		<!-- Link hidden for export -->
 		<a download="Export_All.txt" class="wpeo-export-all-download-file" href="#"></a>
 		
-		<label for="wpeo-sort-by-tag"><?php _e( 'Sort : ', 'wpeotasks-i18n' ); ?></label>
-		<select id="wpeo-sort-by-tag" class="wpeo-task-dashboard-tags" >
-			<option value="all"><?php _e( 'All', 'wpeotasks-i18n' );?></option>
-			<?php if( !empty( $tags ) ) :?>
-				<?php foreach( $tags as $tag ) : ?>
-					<option value="<?php echo $tag->slug; ?>"><?php echo $tag->name; ?></option>
-				<?php endforeach; ?>
-			<?php endif; ?>
-		</select>
+		<?php if( class_exists( 'wpeo_tag_ctr' ) ) : ?>
+			<label for="wpeo-sort-by-tag"><?php _e( 'Sort : ', 'wpeotasks-i18n' ); ?></label>
+			<select id="wpeo-sort-by-tag" class="wpeo-task-dashboard-tags" >
+				<option value="all"><?php _e( 'All', 'wpeotasks-i18n' );?></option>
+				<?php if( !empty( $array_tag ) ) :?>
+					<?php foreach( $array_tag as $tag ) : ?>
+						<option value="<?php echo $tag->slug; ?>"><?php echo $tag->name; ?></option>
+					<?php endforeach; ?>
+				<?php endif; ?>
+			</select>
+		<?php endif; ?>
+		
+		<a href="#" class="button button-secondary wpeo-button-archive-task"><?php _e( 'Archive', 'wpeotasks-i18n' ); ?></a>
+		
 	</div> 
 
 	<div class="wpeo-block-tasks grid">
-		<div class="grid-sizer" style='width: <?php echo $this->task_width[$per_page]; ?>%'></div>
+		<div class="grid-sizer" style='width: <?php echo $this->task_width[$this->task_per_page]; ?>%'></div>
 	<?php if( !empty ($tasks) ) : ?>
 		<?php require( wpeoTasksTemplate_ctr::get_template_part( WPEOMTM_TASK_DIR, WPEOMTM_TASK_TEMPLATES_MAIN_DIR, 'backend', 'tasks' ) ); ?>
 	<?php else: ?>

@@ -3,6 +3,12 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 class wpeo_tasks_ctr {
+	public $array_exclude_module = array(
+		'wpeo_files',
+		'wpeo_tag',
+	);
+	
+	public $task_per_page = 3;
 	public $task_width = array(
 		1 => '100',
 		2 => '50',
@@ -14,23 +20,23 @@ class wpeo_tasks_ctr {
 	 * @return void
 	 */
 	public function __construct() {
-		add_action( 'init', array( &$this, 'callback_init' ), 0, 0 );
+		$this->install_in( 'core' );		
+		$this->install_in( 'modules' );
+		
+		add_action( 'init', array( &$this, 'callback_init' ), 1, 0 );
 		add_action( 'admin_menu', array( &$this, 'callback_admin_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( &$this, 'callback_admin_enqueue_scripts' ), 1 );
  		add_action( 'admin_print_scripts', array( &$this, 'callback_admin_print_scripts') );
- 		
  		add_filter( 'set-screen-option', array( &$this, 'callback_set_screen_option' ), 10, 3 );
  		
  		$this->initialize_ajax();
- 		$this->install_in( 'core' );
- 		//$this->install_in( 'modules' );
 	}
 	
 	/**
 	 * WP HOOK - Call private function my_custom_post_type and the function create_my_metaboxes
 	 * @return void
 	 */
-	public function callback_init() {
+	public function callback_init() {		
 		$this->my_custom_post_type();
 	}
 	
@@ -90,6 +96,17 @@ class wpeo_tasks_ctr {
 				'rewrite'			  	=> null,
 		);
 		register_post_type( wpeo_tasks_mod::$post_type, $args );
+		
+		/** I need a post state for archive task ! */
+		$post_status = wpeo_tasks_mod::$task_state_archive;
+		$args = array(
+			'label'						=> __( 'Archive', 'wpeotasks-i18n' ),
+			'public'					=> true,
+			'exclude_from_search' 		=> false,
+			'show_in_admin_all_list' 	=> true,
+			'show_in_admin_status_list' => true,
+		);
+		register_post_status( $post_status, $args );
 	}
 
 	/**
@@ -123,6 +140,7 @@ class wpeo_tasks_ctr {
 		add_action( 'load-' . $hook, array( &$this, 'callback_add_option' ) );
 		
 		add_submenu_page( 'wpeomtm-dashboard', __( 'Task management dashboard', 'wpeotasks-i18n' ), __( 'Tasks manager', 'wpeotasks-i18n' ), 'manage_options', 'wpeomtm-dashboard', array( &$this, 'callback_menu_page_dashboard' ) );
+// 		add_submenu_page( 'wpeomtm-dashboard', __( 'Timeline', 'wpeotasks-i18n' ), __( 'Timeline', 'wpeotasks-i18n' ), 'manage_options', 'wpeomtm-timeline', array( &$this, 'callback_menu_page_timeline' ) );
 	}
 	
 	/**
@@ -134,6 +152,7 @@ class wpeo_tasks_ctr {
 		wp_enqueue_script( 'wpeo-task-js', WPEOMTM_TASK_URL . '/asset/js/backend.js', array("jquery", "jquery-form", "jquery-ui-datepicker", "jquery-ui-sortable", "jquery-masonry"), WPEOMTM_TASK_VERSION );
 		wp_enqueue_script( 'wpeo-task-hideseek-js', WPEOMTM_TASK_URL . '/asset/js/jquery.hideseek.min.js', array("jquery",), WPEOMTM_TASK_VERSION );
 		wp_enqueue_script( 'wpeo-task-flextext-js', WPEOMTM_TASK_URL . '/asset/js/flextext.min.js', array("jquery",), WPEOMTM_TASK_VERSION );
+		wp_enqueue_script( 'wpeo-task-tablesorter-js', WPEOMTM_TASK_URL . '/asset/js/jquery.tablesorter.min.js', array("jquery",), WPEOMTM_TASK_VERSION );
 	
 		/** CSS */
 		wp_register_style( 'wpeo-task-css', WPEOMTM_TASK_URL . '/asset/css/backend.css', '', WPEOMTM_TASK_VERSION );
@@ -162,18 +181,40 @@ class wpeo_tasks_ctr {
 	*/
 	public function callback_menu_page_dashboard() {
 		$tasks = wpeo_tasks_mod::get_tasks();
-		$tags = wpeo_tasks_tags_mod::get_tags();
 		
-		/** Get options */
+		/** Get the per page option */
 		$user = get_current_user_id();
 		$screen = get_current_screen();
 		$option = $screen->get_option( 'per_page', 'option' );
 		
-		$per_page = get_user_meta( $user, $option, true);
+		$this->task_per_page = get_user_meta( $user, $option, true);
 		
-		if( empty( $per_page ) ) $per_page = 3; // Default value
+		if( empty( $this->task_per_page ) ) $this->task_per_page = 3; // Default value
+		
+		if( class_exists( 'wpeo_tag_mod' ) ) $array_tag = wpeo_tag_mod::get_tag();
 		
 		require_once( wpeoTasksTemplate_ctr::get_template_part( WPEOMTM_TASK_DIR, WPEOMTM_TASK_TEMPLATES_MAIN_DIR, 'backend', 'dashboard', 'main'));
+	}
+	
+	/**
+	 * WP HOOK - Display the timeline page
+	 * This page it's all the history of the user action
+	 */
+	public function callback_menu_page_timeline() {
+		/** Add to timeline */
+		$current_user = wp_get_current_user();
+		
+		$args = array(
+			'time' 		=> current_time( 'mysql' ),
+			'user'		=> $current_user->display_name,
+			'action'	=> __( 'Update the title', 'wpeotasks-i18n' ),
+		);
+		wpeo_tasks_mod::add_to_timeline( 551, $args);
+		
+		$array_data = wpeo_tasks_mod::get_timeline( 551 );
+		echo"<pre>";print_r($array_data);echo"</pre>";
+		
+		require_once( wpeoTasksTemplate_ctr::get_template_part( WPEOMTM_TASK_DIR, WPEOMTM_TASK_TEMPLATES_MAIN_DIR, 'backend', 'timeline') );
 	}
 	
 	/**
@@ -219,17 +260,32 @@ class wpeo_tasks_ctr {
 	 */
 	private function initialize_ajax() {
 		add_action( 'wp_ajax_wpeo-new-task', array( &$this, 'ajax_new_task' ) );
-		add_action( 'wp_ajax_wpeo-delete-task', array( &$this, 'ajax_delete_task' ) );
 		add_action( 'wp_ajax_wpeo-refresh-task', array( &$this, 'ajax_refresh_task' ) );
+		add_action( 'wp_ajax_wpeo-delete-task', array( &$this, 'ajax_delete_task' ) );
+		
+		/** Archive, unpacked action */
+		add_action( 'wp_ajax_wpeo-send-to-archive', array( &$this, 'ajax_send_to_archive' ) );
+		add_action( 'wp_ajax_wpeo-send-to-unpacked', array( &$this, 'ajax_send_to_unpacked' ) );
+		
+		/** Export task ajax */
 		add_action( 'wp_ajax_wpeo-export', array( &$this, 'ajax_export' ) );
 		add_action( 'wp_ajax_wpeo-export-tasks', array( &$this, 'ajax_export_tasks' ) );
+		
+		/** Direct action for the task */
 		add_action( 'wp_ajax_wpeo-save-title', array( &$this, 'ajax_save_title' ) );
 		add_action( 'wp_ajax_wpeo-change-user-write', array( &$this, 'ajax_change_user_write' ) );
 		add_action( 'wp_ajax_wpeo-save-time-estimated', array( &$this, 'ajax_save_time_estimated' ) );
+		
+		/** Here the notification ajax ! */
 		add_action( 'wp_ajax_wpeo-load-notification', array( &$this, 'ajax_load_notification' ) );
 		add_action( 'wp_ajax_wpeo-cancel-delete-task', array( &$this, 'ajax_cancel_delete_task' ) );
+		
+		/** For setting the task */
 		add_action( 'wp_ajax_wpeo-view-setting', array( &$this, 'ajax_view_setting' ) );
 		add_action( 'wp_ajax_wpeo-update-setting', array( &$this, 'ajax_update_setting' ) );
+		
+		/** The HEART */
+		add_action( 'wp_ajax_wpeo-heart-task', array( &$this, 'ajax_heart_task' ) );
 	}
 	
 	/**
@@ -260,6 +316,12 @@ class wpeo_tasks_ctr {
 			if($task != null) {
 				$new_metabox = true;
 				$task->new = true;
+
+				$user = get_current_user_id();
+				$this->task_per_page = get_user_meta( $user, 'wpeo_task_per_line', true);
+				
+				
+				if( empty( $this->task_per_page ) ) $this->task_per_page = 3; // Default value
 				
 				ob_start();
 				require( wpeoTasksTemplate_ctr::get_template_part( WPEOMTM_TASK_DIR, WPEOMTM_TASK_TEMPLATES_MAIN_DIR, "backend", "task") );
@@ -281,7 +343,7 @@ class wpeo_tasks_ctr {
 		
 		$response = new wpeo_tasks_json_mod();
 		
-		if ( !wpeo_tasks_users_mod::check_user_write_mode( ( int ) $_POST['task_id'], ( int ) get_current_user_id() ) ) {
+		if ( class_exists( 'wpeo_user_ctr' ) && !wpeo_user_mod::check_user_write_mode( ( int ) $_POST['task_id'], ( int ) get_current_user_id() ) ) {
 			$response->setState( 'error', __( 'You are not allowed to edit this task : You need to be in write mode', 'wpeotasks-i18n' ) );
 			$response->setCode(21);
 		}
@@ -311,6 +373,83 @@ class wpeo_tasks_ctr {
 				'task_name' 			=> $task->post_title,
 				'notification_message' 	=> __( 'The task was moved to the Trash', 'wpeotasks-i18n' ),
 				'notification_method' 	=> 'cancel_delete_task',
+			));
+		}
+		
+		wp_die( $response->output_json() );
+	}
+	
+	/**
+	 * AJAX - Move the task to archive
+	 * Just set the post_status to "archive"
+	 * @param $_POST['task_id'] - The task id
+	 * @return JSON Response
+	 */
+	public function ajax_send_to_archive() {
+		header('Content-Type: application/json');
+		
+		$response = new wpeo_tasks_json_mod();
+		
+		if ( class_exists( 'wpeo_user_ctr' ) && !wpeo_user_mod::check_user_write_mode( ( int ) $_POST['task_id'], ( int ) get_current_user_id() ) ) {
+			$response->setState( 'error', __( 'You are not allowed to edit this task : You need to be in write mode', 'wpeotasks-i18n' ) );
+			$response->setCode(21);
+		}
+		
+		if ( !wp_verify_nonce( $_POST['_wpnonce'], 'nonce_archive' ) ) {
+			$response->setState( 'error', __( 'You are not allowed to edit this task : Incorrect nonce', 'wpeotasks-i18n' ) );
+			$response->setCode(22);
+		}
+		
+		if( !$response->check_have_error() ) {
+			/** Send my task to archive ! */
+			$postarr = array(
+				'ID'			=> $_POST['task_id'],
+				'post_status' 	=> wpeo_tasks_mod::$task_state_archive,
+			);
+			wp_update_post( $postarr );
+			
+			$response->setCode(0);
+			$response->setObjectId( $_POST['task_id'] );
+			$response->setState( 'success', __( sprintf('The task %d is archived', $_POST['task_id'] ), 'wpeotasks-i18n' ) );
+			
+			$response->setData( array(
+					'notification_message' 	=> __( sprintf('The task %d is archived', $_POST['task_id'] ), 'wpeotasks-i18n' ),
+					'notification_method' 	=> 'cancel_archive_task',
+			));
+		}
+		
+		wp_die( $response->output_json() );
+	}
+	
+	public function ajax_send_to_unpacked() {
+		header('Content-Type: application/json');
+		
+		$response = new wpeo_tasks_json_mod();
+		
+		if ( class_exists( 'wpeo_user_ctr' ) && !wpeo_user_mod::check_user_write_mode( ( int ) $_POST['task_id'], ( int ) get_current_user_id() ) ) {
+			$response->setState( 'error', __( 'You are not allowed to edit this task : You need to be in write mode', 'wpeotasks-i18n' ) );
+			$response->setCode(21);
+		}
+		
+		if ( !wp_verify_nonce( $_POST['_wpnonce'], 'nonce_unpacked' ) ) {
+			$response->setState( 'error', __( 'You are not allowed to edit this task : Incorrect nonce', 'wpeotasks-i18n' ) );
+			$response->setCode(22);
+		}
+		
+		if( !$response->check_have_error() ) {
+			/** Send my task to archive ! */
+			$postarr = array(
+					'ID'			=> $_POST['task_id'],
+					'post_status' 	=> wpeo_tasks_mod::$task_state,
+			);
+			wp_update_post( $postarr );
+				
+			$response->setCode(0);
+			$response->setObjectId( $_POST['task_id'] );
+			$response->setState( 'success', __( sprintf('The task %d is now publish', $_POST['task_id'] ), 'wpeotasks-i18n' ) );
+				
+			$response->setData( array(
+				'notification_message' 	=> __( sprintf('The task %d is now publish', $_POST['task_id'] ), 'wpeotasks-i18n' ),
 			));
 		}
 		
@@ -489,9 +628,11 @@ class wpeo_tasks_ctr {
 		$response = new wpeo_tasks_json_mod();
 		$response->setObjectId( $_POST['task_id'] );
 		
-		if ( !wpeo_tasks_users_mod::check_user_write_mode( ( int ) $_POST['task_id'], ( int ) get_current_user_id() ) ) {
-			$response->setState( 'error', __( 'You are not allowed to edit this task : You need to be in write mode', 'wpeotasks-i18n' ) );
-			$response->setCode(21);
+		if( class_exists( 'wpeo_user_ctr' ) ) {
+			if ( !wpeo_user_mod::check_user_write_mode( ( int ) $_POST['task_id'], ( int ) get_current_user_id() ) ) {
+				$response->setState( 'error', __( 'You are not allowed to edit this task : You need to be in write mode', 'wpeotasks-i18n' ) );
+				$response->setCode(21);
+			}
 		}
 		
 		if ( !wp_verify_nonce( $_POST['_wpnonce'], 'wp_nonce_title' ) ) {
@@ -536,15 +677,21 @@ class wpeo_tasks_ctr {
 			$response->setState( 'error', __( 'You are not allowed to edit this task : Incorrect nonce', 'wpeotasks-i18n' ) );
 		}
 		
-		$response->setCode(0);
-		if( 'w' == $_POST['current_mode'] ) {
-			wpeo_tasks_users_mod::remove_user_write( (int) $_POST['task_id'] );
-			$response->setState( 'success', __( sprintf( 'Remove write permission on the task %d', $_POST['task_id'] ) , 'wpeotasks-i18n' ) );
+		if( class_exists( 'wpeo_user_ctr' ) ) {
+			$response->setCode(0);
+			if( 'w' == $_POST['current_mode'] ) {
+				wpeo_user_mod::remove_user_write( (int) $_POST['task_id'] );
+				$response->setState( 'success', __( sprintf( 'Remove write permission on the task %d', $_POST['task_id'] ) , 'wpeotasks-i18n' ) );
+			}
+			else {
+				wpeo_user_mod::add_user_write( (int) $_POST['task_id'], get_current_user_id() );
+				$response->setState( 'success', __( sprintf( 'Put the write permission on the task %d for the user %d', $_POST['task_id'], get_current_user_id() ) , 'wpeotasks-i18n' ) );
+				$response->setData( array( 'notification_message' => __( sprintf( 'Put the write permission on the task %d for the user %d', $_POST['task_id'], get_current_user_id() ), 'wpeotasks-i18n' ) ) );
+			}
 		}
 		else {
-			wpeo_tasks_users_mod::add_user_write( (int) $_POST['task_id'], get_current_user_id() );
-			$response->setState( 'success', __( sprintf( 'Put the write permission on the task %d for the user %d', $_POST['task_id'], get_current_user_id() ) , 'wpeotasks-i18n' ) );
-			$response->setData( array( 'notification_message' => __( sprintf( 'Put the write permission on the task %d for the user %d', $_POST['task_id'], get_current_user_id() ), 'wpeotasks-i18n' ) ) );
+			$response->setState( 'error', __( 'The module wpeo_user_ctr is not declared' , 'wpeotasks-i18n' ) );
+			$response->setData( array( 'notification_message' => __( 'The module wpeo_user_ctr is not declared', 'wpeotasks-i18n' ) ) );
 		}
 		wp_die( $response->output_json() );
 	}
@@ -561,7 +708,7 @@ class wpeo_tasks_ctr {
 		$response = new wpeo_tasks_json_mod();
 		$response->setObjectId( $_POST['task_id'] );
 		
-		if ( !wpeo_tasks_users_mod::check_user_write_mode( ( int ) $_POST['task_id'], ( int ) get_current_user_id() ) ) {
+		if ( class_exists( 'wpeo_user_ctr' ) && !wpeo_user_mod::check_user_write_mode( ( int ) $_POST['task_id'], ( int ) get_current_user_id() ) ) {
 			$response->setState( 'error', __( 'You are not allowed to edit this task : You need to be in write mode', 'wpeotasks-i18n' ) );
 			$response->setCode(21);
 		}
@@ -687,6 +834,56 @@ class wpeo_tasks_ctr {
 		wp_die( $response->output_json() );
 	}
 	
+	public function ajax_heart_task() {
+ 		header('Content-Type: application/json');
+		
+		$response = new wpeo_tasks_json_mod();
+		
+		/** Get all tasks, but i wan't only with write mod for this user */
+		$user_id = get_current_user_id();
+		$array_task = wpeo_tasks_mod::get_tasks();
+		$array_task_can_write = array();
+		$array_serialized_data = array();
+		$array_user_write_task = array();
+		
+		$task_id_to_be_refresh = "";
+		
+		if( !empty( $array_task ) ) {
+			foreach( $array_task as $key => $task ) {
+				$array_serialized_data[$task->ID]['title'] = $task->post_title;
+				$points = wpeo_tasks_points_mod::get_points( ( int ) $task->ID, false );
+				$array_serialized_data[$task->ID]['point'] = $points;
+				$points = wpeo_tasks_points_mod::get_points( ( int ) $task->ID, true );
+				$array_serialized_data[$task->ID]['point_completed'] = $points;
+				$array_serialized_data[$task->ID] = md5( serialize( $array_serialized_data[$task->ID] ) );
+				
+				$array_user_write_task[$task->ID] = $task->informations->user_can_write;
+					
+				if( !empty( $task->informations ) && !$task->informations->user_can_write && $array_serialized_data[$task->ID] != $_POST['data'][$key] ) {
+					
+					$task_id_to_be_refresh .= $task->ID . ', ';
+					$array_task_can_write[] = $task->ID;
+				}
+			}
+						
+			/** Delete last comma */
+			$task_id_to_be_refresh = substr($task_id_to_be_refresh, 0, -2);
+		}
+		
+		$string_response = !empty( $task_id_to_be_refresh ) ? $task_id_to_be_refresh : __( 'Nothing to refresh', 'wpeotasks-i18n' );
+		
+		$response->setCode(0);
+		$response->setState( 'success', __( sprintf( 'Heart refresh the task : %s', $string_response) , 'wpeotasks-i18n' ) );
+		$response->setData( array( 
+			'notification_message' 	=> __( sprintf( 'Heart refresh the task : %s', $string_response) , 'wpeotasks-i18n' ),
+			'refresh_task_id' 		=> $array_task_can_write,
+			'user_id'				=> $user_id,
+			'user_write'			=> $array_user_write_task,
+		));
+		
+		wp_die( $response->output_json() );
+	}
+	
 	/**
 	 * Export the content to the path_file
 	 * @param string $path_file
@@ -712,19 +909,23 @@ class wpeo_tasks_ctr {
 		if( is_dir( $module_folder ) ) {
 			$parent_folder_content = scandir( $module_folder );
 			foreach ( $parent_folder_content as $folder ) {
-				if ( $folder && substr( $folder, 0, 1) != '.' ) {
+				if ( $folder && substr( $folder, 0, 1) != '.' && !in_array( $folder, $this->array_exclude_module ) ) {
 					if( is_dir ( $module_folder . $folder ) ) 
 						$child_folder_content = scandir( $module_folder . $folder );
 					
 					if ( file_exists( $module_folder . $folder . '/' . $folder . '.php') ) {
 						$f =  $module_folder . $folder . '/' . $folder . '.php';
 						include( $f );
+						
+						/** special tags */
+						if( $folder == 'wpeo_tag' ) {
+							wpeo_tag_mod::$taxonomy = "wpeo_project-task-tags";
+						}
 					}
 				}
 			}
 		}
 	}
-
 }
 
 ?>

@@ -4,7 +4,7 @@ Donate link:
 Tags: project, task, time, manage, client, easy, french, wordpress task, wordpress time
 Requires at least: 3.4.0
 Tested up to: 4.2.2
-Stable tag: 1.0
+Stable tag: 1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,8 +17,8 @@ En retard pour un projet ? Task Manager vous permet de gérer avec facilité et 
 Trop de tâche ? Catégorisez vos tâches et retrouvez-les en 1 clique !
 
 = Besoin d'aide ? =
-Rendez vous sur notre [forum d'entraide WPshop](http://forums.eoxia.com/forum/).
-Commandez du temps d'[assistance pour votre site WordPress](http://www.wpshop.fr/ecommerce/assistance-wordpress-wpshop/assistance/ "assistance wordpress"), du dépannage ou de la formation.
+Rendez vous sur notre [forum d'entraide](http://forums.eoxia.com/forum/).
+Commandez du temps d'[assistance pour votre site WordPress](http://shop.eoxia.com/ecommerce/assistance/assistance-wordpress/ "assistance wordpress"), du dépannage ou de la formation.
 
 
 == Installation ==
@@ -47,11 +47,20 @@ L'installation de l'extension peut se faire de 2 façons :
 
 == Changelog ==
 
+ = 1.1 =
+ * Archive / Archiver
+ * Add the button "View task" / Ajout du bouton "Voir la tâche"
+ * Use the Heart WordPress to refresh the content of the task / Utilises le cœur de WordPress pour actualiser le contenu d'une tâche
+ * Added block "Screen Options" to manage the user's viewing preferences / Ajout du bloc "Options de l'écran" pour gérer les préférences d'affichage de l'utilisateur
+ * Manage display for tasks associated to another element / Gestion de l'affichage des tâches affectées à un élément
+ * Create a controller module with the user / Créer un module avec le controller user
+ * Update some class CSS / Met à jour quelques élements CSS
+	
+ 
 = 1.0 =
  * Créer une tâche / Create a task.
  * Créer un point / Create a point.
  * Organiser vos tâches / Organizing your tasks.
  * Affecter des utilisateurs / Assign users.
  * Exporter une tâche ou plusieurs tâches / Export a task or multiple tasks ( txt ) 
- 
  

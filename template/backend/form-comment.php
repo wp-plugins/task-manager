@@ -9,7 +9,7 @@
     
     <p>
       <label><?php _e( 'Date', 'wpeotasks-i18n' ); ?></label>
-    	<input type="text" style="width: 100px;" placeholder="<?php _e( 'YYYY-MM-DD', 'wpeotasks-i18n' ); ?>" class="isDate" value="<?php echo date( 'Y-m-d' ); ?>" readonly="readonly" >
+    	<input name="date" type="text" style="width: 100px;" placeholder="<?php _e( 'YYYY-MM-DD', 'wpeotasks-i18n' ); ?>" class="isDate" value="<?php echo date( 'Y-m-d' ); ?>" readonly="readonly" >
     	<span class="dashicons dashicons-calendar-alt wpeomtm-current-date-shortcut" title="<?php _e( 'Get the current date', 'wpeotasks-i18n' ); ?>"></span>
     </p>
   	<p>

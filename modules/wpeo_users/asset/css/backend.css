@@ -1,0 +1,33 @@
+@CHARSET "ISO-8859-1";
+
+.wpeo-main-user .wpeo-ul-user::after {
+	display: table;
+	content: '';
+	clear: both;
+}
+.wpeo-main-user {
+	background: #404a53;
+}
+
+.wpeo-main-user .wpeo-ul-user li {
+	float: left;
+	padding: 4px;
+	margin: 4px;
+	font-size: 12px;
+}
+.wpeo-main-user .wpeo-adding-user {
+	border: 1px dashed #0073aa;
+	padding: 6px;
+	margin: 6px;
+}
+.wpeo-main-user.wpeo-ul-tags.wpeo-adding-user::after {
+	display: table;
+	content: '';
+	clear: both;
+}
+.wpeo-main-user .wpeo-no-display {
+	display: none;
+}
+.wpeo-main-user .wpeo-ul-user img:hover {
+	cursor: move;
+}

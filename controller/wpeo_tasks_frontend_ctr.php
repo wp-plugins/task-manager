@@ -27,8 +27,8 @@ class wpeo_tasks_frontend_ctr {
 		add_action( 'wp_enqueue_scripts', array( &$this, 'callback_enqueue_scripts' ) );
 		add_action( 'wp_print_scripts', array( &$this, 'callback_print_scripts') );
 		
-		add_filter( 'the_title', array( &$this, 'callback_the_title'), 10, 2 );
-		add_filter( 'the_content', array( &$this, 'callback_the_content'), 10 );
+		add_filter( 'the_title', array( &$this, 'callback_the_title'), 1, 2 );
+		add_filter( 'the_content', array( &$this, 'callback_the_content'), 50 );
 		
 // 		add_shortcode( 'wpeo_project', array( &$this, 'shortcode_task' ) );
 	}
@@ -99,9 +99,9 @@ class wpeo_tasks_frontend_ctr {
 	}
 	public function callback_the_content( $content ) {
 		global $post;
-		
+
 		if( wpeo_tasks_mod::$post_type !== $post->post_type )
-			return;
+			return $content;
 		
 		$task = wpeo_tasks_mod::get_task( (int) $post->ID );
 				

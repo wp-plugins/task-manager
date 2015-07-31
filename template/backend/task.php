@@ -2,8 +2,10 @@
 
 <?php if( !empty($task) && !empty( $task->ID ) ): ?>
 	<?php if( !empty ( $task->new ) ):?>
-		<div class="grid-item wpeo-project-task-<?php echo $task->ID; ?> <?php echo $task->informations->class_tags; ?> <?php echo $task->informations->my_task; ?>">
+		<div style='width: <?php echo $this->task_width[$this->task_per_page]; ?>%' class="grid-item wpeo-project-task-<?php echo $task->ID; ?> <?php echo $task->informations->class_tags; ?> <?php echo $task->informations->my_task; ?>">
 	<?php endif; ?>
+	
+	<?php $serialized_data_heart = array( 'title' => $task->post_title ); ?>
 
 		<div class="wpeo-project-task">
 			<span class="task-marker"></span>
@@ -19,6 +21,7 @@
 			<input type="hidden" class="wpeo-project-task-nonce" value="<?php echo wp_create_nonce( 'wp_nonce_refresh_task' ); ?>" />
 
 			<!--  Header  -->
+			<a download="Export.txt" class="wpeo-download-file" href="#"></a>
 			<ul class="wpeo-task-header">
 				<li class="wpeo-task-id">#<?php echo $task->ID . ' -'; ?></li>
 				<li class="wpeo-task-title">
@@ -38,7 +41,6 @@
 							<i class="dashicons dashicons-admin-settings"></i> 
 							<a href="<?php echo wp_nonce_url( admin_url( 'admin-ajax.php' ) . '?action=wpeo-view-setting&task_id=' . $task->ID, 'nonce_setting' ); ?>" title="Task #<?php echo $task->ID . ' : ' . __( 'Settings', 'wpeotasks-i18n' ); ?>" class="my-thickbox wpeo-task-settings"><?php _e( 'Settings', 'wpeotasks-i18n' );?></a>
 						</li>
-						<a download="Export.txt" class="wpeo-download-file" href="#"></a>
 							<?php 
 							$file_filter = '';
 							
@@ -47,9 +49,21 @@
 							
 							echo $file_filter;
 							?>
+							
+						<li>
+							<i class="dashicons dashicons-welcome-view-site"></i> 
+							<a href="<?php echo get_post_permalink( $task->ID ); ?>" title="<?php _e( 'View the task', 'wpeotasks-i18n' ); ?>" target="_blank" class="wpeo-view-task"><?php _e( 'View the task', 'wpeotasks-i18n' );?></a>
+						</li>
+						
 						<li class="wpeo-export" data-id="<?php echo $task->ID; ?>" data-nonce="<?php echo wp_create_nonce( 'nonce_export' ); ?>"  title="<?php _e( 'Export', 'wpeotasks-i18n' ); ?>">
 							<i class="dashicons dashicons-media-text"></i> <?php _e( 'Export', 'wpeotasks-i18n' ); ?>
 						</li>
+						<?php if( wpeo_tasks_mod::$task_state_archive == $task->post_status):?>
+							<li class="wpeo-send-to-unpacked" title="<?php _e( 'Send to unpacked', 'wpeotasks-i18n' ); ?>" data-id="<?php echo $task->ID; ?>" data-nonce="<?php echo wp_create_nonce( 'nonce_unpacked' ); ?>"><i class="dashicons dashicons-archive"></i>  <?php _e( 'Unpacked', 'wpeotasks-i18n' ); ?></li>
+						<?php else: ?>
+							<li class="wpeo-send-to-archive" title="<?php _e( 'Move to archive', 'wpeotasks-i18n' ); ?>" data-id="<?php echo $task->ID; ?>" data-nonce="<?php echo wp_create_nonce( 'nonce_archive' ); ?>"><i class="dashicons dashicons-archive"></i>  <?php _e( 'Archive', 'wpeotasks-i18n' ); ?></li>
+						<?php endif; ?>
+						
 						<li class="wpeo-send-task-to-trash"  title="<?php _e( 'Move to trash', 'wpeotasks-i18n'); ?>" data-id="<?php echo $task->ID; ?>" data-nonce="<?php echo wp_create_nonce( 'nonce_trash' ); ?>" ><i class="dashicons dashicons-trash"></i>  <?php _e( 'Trash', 'wpeotasks-i18n' ); ?></li>	
 					</ul>
 				</li>
@@ -61,35 +75,31 @@
 			<?php require( wpeoTasksTemplate_ctr::get_template_part( WPEOMTM_TASK_DIR, WPEOMTM_TASK_TEMPLATES_MAIN_DIR, 'backend', 'form', 'points' ) ); ?>
 
 			<!-- Footer -->
-			<div class="wpeo-task-footer">				
-				<ul class="wpeo-project-task-categories">
-					<?php if( !empty( $task->informations->tags ) ) :?>
-						<?php foreach( $task->informations->tags as $tag ) :?>
-							<li><?php echo $tag; ?></li>
-						<?php endforeach; ?>
-					<?php endif; ?>
-					<li class="wpeo-force-alignright"><a href="<?php echo wp_nonce_url( admin_url( 'admin-ajax.php' ) . '?action=view-tag&task_id=' . $task->ID, 'wp_nonce_view_tag' ); ?>" title="Task #<?php echo $task->ID . ' : ' . __( 'Tags', 'wpeotasks-i18n' ); ?>" class="my-thickbox dashicons dashicons-category"></a></li>
-				</ul>
-
-				<ul class="wpeo-project-task-users">
-					<?php if( !empty( $task->informations->users ) ) :?>
-						<?php foreach( $task->informations->users as $user ) :?>
-							<li title="<?php echo $user->ID . ' - ' . $user->user_login . ' ' . $user->user_email; ?>" class="wpeo-user-<?php echo $user->ID; ?>"><?php echo get_avatar($user->ID, 24); ?></li>
-						<?php endforeach; ?>
-					<?php endif; ?>
-					<li class="wpeo-force-alignright"><a href="<?php echo wp_nonce_url( admin_url( 'admin-ajax.php' ) . '?action=view-user&type=task&task_id=' . $task->ID, 'view_user' ); ?>" title="Task #<?php echo $task->ID . ' : ' . __( 'Users', 'wpeotasks-i18n' ); ?>" class="my-thickbox dashicons dashicons-plus"></a></li>
-				</ul>
+			<div class="wpeo-task-footer">		
+				<!--  The tags -->
+				<?php if( shortcode_exists( 'wpeotags' ) ):
+					echo do_shortcode( '[wpeotags id="' . $task->ID . '" callback_js="callback_tag" ]' );
+				endif; ?>		
 				
-				<?php if( shortcode_exists( '' ) ):
+				<!-- The user task -->
+				<?php if( shortcode_exists( 'wpeouser' ) ) :
+					echo do_shortcode( '[wpeouser id="' . $task->ID . '" ]' );
+				endif; ?>
+				
+				<!-- The file task -->
+				<?php if( shortcode_exists( 'wpeofiles' ) ):
 					echo do_shortcode( '[wpeofiles id="' . $task->ID . '" file_list_association ]' );
 				endif; ?>
 				
 				
 			</div>
-
+			
+			<!-- heart data -->
+			<?php $serialized_data_heart = md5( serialize( $serialized_data_heart ) ); ?>
+			<input type="hidden" class="wpeo-serialized-data-heart" value="<?php echo $serialized_data_heart; ?>" />
+			<?php unset ($serialized_data_heart);?>
 
 		</div>
-
 	<?php if( !empty ( $task->new ) ):?>
 		</div>
 	<?php endif; ?>

@@ -8,11 +8,14 @@
 .wpeo-project-wrap .wpeo-task-dashboard-tags li {
 	display: inline-block;
 }
+.wpeo-project-wrap .wpeo-task-archived {
+	display: none;
+}
 
 .wpeo-container-notification {
 	position: fixed;
 	bottom: 35px;
-	z-index: 2000;
+	z-index: 2001;
 }
 
 .wpeo-notification {
@@ -379,7 +382,7 @@
 .wpeo-project-wrap .wpeo-task-selected .task-marker {
 	opacity: 1;
 }
-.wpeo-project-wrap .wpeo-task-settings {
+.wpeo-project-wrap .wpeo-task-settings, .wpeo-project-wrap .wpeo-view-task {
   width: 100%;
   display: block;
   position: absolute;
@@ -392,48 +395,42 @@
   text-decoration: none;
 }
 
+.wpeo-project-wrap .wpeo-view-task {
+	top: 40px;
+}
+
 /*
 *	FOOTER
 */
 .wpeo-task-footer .dashicons {
 	color: #fff;
 	font-size: 14px;
+	width: auto !important;
+	height: auto !important;
+	padding: 6px 6px 6px 6px;
 }
-.wpeo-project-wrap .wpeo-project-task-users, .wpeo-project-wrap .wpeo-project-task-categories {
+.wpeo-project-wrap .wpeo-project-task-users {
 	background: rgba(0,0,0,0.2);
 	color: #fff;
 	text-align: center;
 	position: relative;
 }
 .wpeo-project-wrap .wpeo-project-task-users {
-	background: rgba(0,0,0,0.3);
-}
-.wpeo-project-wrap .wpeo-project-task-categories {
-	background: rgba(0,0,0,0.4);
-}
-.wpeo-project-wrap .wpeo-project-task-categories li {
-	color: rgba(255,255,255,0.5);
+	background: #3B3E41;
 }
 .wpeo-project-wrap .wpeo-project-task-users li {
 	line-height: 0;
 }
-.wpeo-project-wrap .wpeo-project-task-categories li::after {
-	content: ' | ';
-}
-.wpeo-project-wrap .wpeo-project-task-categories li:last-child::after {
-	content: '';
-}
 
-
-.wpeo-project-wrap .wpeo-project-task-users::after, .wpeo-project-wrap .wpeo-project-task-categories::after {
+.wpeo-project-wrap .wpeo-project-task-users::after {
 	display: table;
 	content: '';
 	clear: both;
 }
-.wpeo-project-wrap .wpeo-project-task-users li, .wpeo-project-wrap .wpeo-project-task-categories li {
+.wpeo-project-wrap .wpeo-project-task-users li {
 	float: left;
 }
-.wpeo-project-wrap .wpeo-project-task-users li:last-child, .wpeo-project-wrap .wpeo-project-task-categories li:last-child {
+.wpeo-project-wrap .wpeo-project-task-users li:last-child {
 	background: rgba(255,255,255,0.2);
 	height: 24px;
 	width: 24px;
@@ -517,6 +514,3 @@
 /*
 * UTILS
 */
-.wpeo-project-wrap .wpeo-force-alignright {
-	float: right !important;
-}
